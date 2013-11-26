@@ -1,6 +1,5 @@
 package com.aug.swip;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
@@ -16,8 +15,8 @@ public class SwipListView extends ListView {
     private float mFirstX;
     private float mFirstY;
 
-    private int mRightViewWidth = 400;
-    private boolean mIsInAnimation = false;
+    private int mRightViewWidth = 300;
+    // private boolean mIsInAnimation = false;
     private final int mDuration = 100;
     private final int mDurationStep = 10;
     private boolean mIsShown;
@@ -71,7 +70,7 @@ public class SwipListView extends ListView {
                 System.out.println("onInterceptTouchEvent============ACTION_UP");
                 if (mIsShown && (mPreItemView != mCurrentItemView || isHitCurItemLeft(lastX))) {
                     hiddenRight(mPreItemView);
-                    return true;
+                    //return true;
                 }
                 break;
         }
@@ -132,7 +131,7 @@ public class SwipListView extends ListView {
 
                 if (mIsHorizontal) {
                     if (mIsShown && mPreItemView != mCurrentItemView) {
-                        return true;
+                        hiddenRight(mPreItemView);
                     }
 
                     if (mIsShown && mPreItemView == mCurrentItemView) {
@@ -157,10 +156,10 @@ public class SwipListView extends ListView {
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
                 System.out.println("============ACTION_UP");
-                if (mIsShown) {
-                    hiddenRight(mPreItemView);
-                    return true;
-                }
+                clearPressedState();
+                 if (mIsShown) {
+                     hiddenRight(mPreItemView);
+                 }
 
                 if (mIsHorizontal != null && mIsHorizontal) {
                     if (mFirstX - lastX > mRightViewWidth / 2) {
@@ -168,8 +167,7 @@ public class SwipListView extends ListView {
                     } else {
                         hiddenRight(mCurrentItemView);
                     }
-
-                    clearPressedState();
+                    
                     return true;
                 }
                 break;
@@ -183,13 +181,13 @@ public class SwipListView extends ListView {
         mCurrentItemView.setPressed(false);
         setPressed(false);
         refreshDrawableState();
-        // invalidate();
+        //invalidate();
     }
 
     private void showRight(View view) {
         System.out.println("=========showRight");
 
-        Message msg = mHandler.obtainMessage();
+        Message msg = new MoveHandler().obtainMessage();
         msg.obj = view;
         msg.arg1 = view.getScrollX();
         msg.arg2 = mRightViewWidth;
@@ -203,7 +201,7 @@ public class SwipListView extends ListView {
         if (mCurrentItemView == null) {
             return;
         }
-        Message msg = mHandler.obtainMessage();
+        Message msg = new MoveHandler().obtainMessage();//
         msg.obj = view;
         msg.arg1 = view.getScrollX();
         msg.arg2 = 0;
@@ -216,12 +214,12 @@ public class SwipListView extends ListView {
     /**
      * show or hide right layout animation
      */
-    @SuppressLint("HandlerLeak")
-    private Handler mHandler = new Handler() {
+    class MoveHandler extends Handler {
         int stepX = 0;
         int fromX;
         int toX;
         View view;
+        private boolean mIsInAnimation = false;
 
         private void animatioOver() {
             mIsInAnimation = false;
@@ -262,12 +260,12 @@ public class SwipListView extends ListView {
             invalidate();
 
             if (!isLastStep) {
-                mHandler.sendEmptyMessageDelayed(0, mDurationStep);
+                this.sendEmptyMessageDelayed(0, mDurationStep);
             } else {
                 animatioOver();
             }
         }
-    };
+    }
 
     public int getRightViewWidth() {
         return mRightViewWidth;

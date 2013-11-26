@@ -35,12 +35,12 @@ public class MainActivity extends Activity {
         mListView = (SwipListView)findViewById(R.id.listview);
         SwipAdapter adapter = new SwipAdapter();
         mListView.setAdapter(adapter);
-        mListView.setOnItemClickListener(new OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(mContext, "item onclick " + position, Toast.LENGTH_SHORT).show();
-            }
-        });
+//        mListView.setOnItemClickListener(new OnItemClickListener() {
+//            @Override
+//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//                Toast.makeText(mContext, "item onclick " + position, Toast.LENGTH_SHORT).show();
+//            }
+//        });
     }
 
     class SwipAdapter extends BaseAdapter {
@@ -73,16 +73,19 @@ public class MainActivity extends Activity {
         private View generateLeftView(final int position) {
             TextView view = new TextView(mContext);
             LinearLayout.LayoutParams lp = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+            //lp.setMargins(0, 0, 100, 0);
             view.setLayoutParams(lp);
             view.setText("item " + position);
             view.setPadding(10, 30, 10, 30);
             // view.setBackgroundColor(Color.parseColor("#f2c2c2"));
-//            view.setOnClickListener(new OnClickListener() {
-//                @Override
-//                public void onClick(View v) {
-//                    Toast.makeText(mContext, "left " + position, Toast.LENGTH_SHORT).show();
-//                }
-//            });
+            view.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Toast.makeText(mContext, "left " + position, Toast.LENGTH_SHORT).show();
+                }
+            });
+            view.setFocusable(false);
+            view.setFocusableInTouchMode(false);
             return view;
         }
 
